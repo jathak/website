@@ -8,7 +8,7 @@ class Question(models.Model):
 	question_title = models.CharField(max_length=100)
 	question_text = models.CharField(max_length=1000)
 	question_soln = models.CharField(max_length=1000)
-	question_difficulty = models.PositiveSmallIntegerField()
+	question_difficulty = models.PositiveSmallIntegerField(default=0)
 
 class QuestionImage(models.Model):
 	question = models.ForeignKey(Question)
