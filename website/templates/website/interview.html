@@ -23,7 +23,10 @@
 		<div class="col-md-2" id="questions-sidebar">
 			<h2 style="text-align: center">Questions</h2>
 			<table class="table table-hover" id="questions-table">
-				<tr><th class="question-cat" id="Arrays"><strong>Arrays</strong><span class="caret"></span></th></tr>
+				{% for question_cat in question_categories %}
+					<tr><th class="question-cat" data-loaded=""><strong class="cat-title" id="{{ question_cat.id }}">{{ question_cat.category_title }}</strong><span class="caret"></span></th></tr>
+				{% endfor %}
+<!-- 				<tr><th class="question-cat" id="Arrays"><strong>Arrays</strong><span class="caret"></span></th></tr>
 					<tr><td class="question" data-target="Arrays">Array 1</td></tr>
 					<tr><td class="question" data-target="Arrays">Array 2</td></tr>
 					<tr><td class="question" data-target="Arrays">Array 3</td></tr>
@@ -32,7 +35,7 @@
 					<tr><td class="question" data-target="Linked-Lists">LL 2</td></tr>
 					<tr><td class="question" data-target="Linked-Lists">LL 3</td></tr>
 				<tr><th class="question-cat" id="Trees"><strong>Trees</strong><span class="caret"></span></th></tr>
-				<tr><th class="question-cat" id="Bitwise Ops"><strong>Bitwise Ops</strong><span class="caret"></span></th></tr>
+				<tr><th class="question-cat" id="Bitwise Ops"><strong>Bitwise Ops</strong><span class="caret"></span></th></tr> -->
 			</table>
 		</div>
 		<div class="col-md-9" id="targ-question">
@@ -53,11 +56,41 @@
 	</div>
 </div>
 <script>
-	$(function() {
-		$(".question").hide();
-	});
 	$(".question-cat").click(function() {
-		$("[data-target=" + $(this).attr("id") + "]").slideToggle(100);
+		var data_loaded = $(this).attr("data-loaded");
+		var cat_id = Number($(this).children(".cat-title").attr("id"));
+		if (data_loaded) {
+			$("[data-target=" + cat_id + "]").slideToggle(100);
+		} else {
+				$.ajax({
+					"url": "/question-cat/",
+					"context": this,
+					"data": {
+						"cat_id": cat_id
+					},
+					"type": "GET",
+					"dataType": "json",
+					"success": function(data) {
+						var question_titles = data["question_titles"];
+						var question_ids = data["question_ids"];
+						for (var i = question_titles.length - 1; i >= 0; i--) {
+							$(this).parent().after("<tr><td class='question' data-target='" + cat_id + "' id='" + question_ids[i] + "'>" + question_titles[i] + "</td><tr>");
+						}
+						$("[data-target=" + cat_id + "]").hide();
+						$("[data-target=" + cat_id + "]").slideToggle(100);
+						$(this).attr("data-loaded", "loaded");
+					},
+					"error": function(jqXHR, textStatus) {
+						alert(textStatus);
+					}
+				});
+		}
 	});
+	// $(function() {
+	// 	$(".question").hide();
+	// });
+	// $(".question-cat").click(function() {
+	// 	$("[data-target=" + $(this).attr("id") + "]").slideToggle(100);
+	// });
 </script>
 {% endblock %}

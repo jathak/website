@@ -10,5 +10,6 @@ urlpatterns = patterns('',
 
     url(r'^$', 'website.views.index', name='index'),
     url(r'^oh/$', 'website.views.oh', name='oh'),
-    url(r'^interview/$', 'website.views.interview', name='interview')
+    url(r'^interview/$', 'website.views.interview', name='interview'),
+    url(r'^question-cat/$', 'website.views.question_cat', name='question-cat')
 )
